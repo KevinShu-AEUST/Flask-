@@ -1,12 +1,17 @@
 # coding=UTF-8
 from flask import Flask
-app=Flask(__name__)#_name_¥Nªí¥Ø«e°õ¦æªº¼Ò²Õ
-@app.route("/")#¨ç¦¡ªº¸Ë¹¢(Deractor):¥H¨çµø¬°°òÂ¦¡A´£¨Ñªş¥[ªº¥\¯à
+app=Flask(__name__)#_name_ä»£è¡¨ç›®å‰åŸ·è¡Œçš„æ¨¡çµ„
+
+@app.route("/")#å‡½å¼çš„è£é£¾(Deractor):ä»¥å‡½è¦–ç‚ºåŸºç¤ï¼Œæä¾›é™„åŠ çš„åŠŸèƒ½
 def home():
     return 'Hello Flask '
-@app.route('/test')#¥Nªí§Ú­Ì­n³B²zªººô¯¸¸ô®|
+@app.route('/test')#ä»£è¡¨æˆ‘å€‘è¦è™•ç†çš„ç¶²ç«™è·¯å¾‘
 def test():
     return 'This is Test'
-if __name__=='_main_':#¦pªG¥H¥Dµ{¦¡°õ¦æ
-    app.run()#¥ß¨è±Ò°Ê¦øªA¾¹
-
+@app.route('/data')#ä»£è¡¨æˆ‘å€‘è¦è™•ç†çš„ç¶²ç«™è·¯å¾‘
+def test():
+    return 'My data'
+#å‹•æ…‹è·¯ç”±:å»ºç«‹è·¯å¾‘ /user/ä½¿ç”¨è€…åç¨± å°æ‡‰çš„è™•ç†å‡½ç¤º
+app.route('/user/<username>')
+if __name__=='_main_':#å¦‚æœä»¥ä¸»ç¨‹å¼åŸ·è¡Œ
+    app.run()#ç«‹åˆ»å•Ÿå‹•ä¼ºæœå™¨
