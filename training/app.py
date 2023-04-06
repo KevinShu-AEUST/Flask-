@@ -2,13 +2,27 @@ from flask import Flask #載入Flask
 from flask import request #載入 Request物件
 # coding=UTF-8
 
-#建立Appkication 物件
+#建立Application 物件
 app=Flask(
     __name__,
     static_folder='public',#靜態檔案的資料夾名稱
     static_url_path='/www' #靜態檔案對應的網址路徑
     )
 #所有在 public 資料夾底下的檔案，都對應到網址路徑 /www/檔案名稱
+#建立路徑/getSum對應的處理函示
+#利用要求字串(Query String)提供彈性 : /getSum?max=最大數字
+@app.route('/getSum')
+def getSum(): #min+(min+1)+(min+2)+(min+3)+...+max
+    #接收要求字串中的參數資料
+    maxNumber=request.args.get('max',100)
+    maxNumber=int(maxNumber)
+    minNumber=request.args.get('min',1)
+    minNumber=int(minNumber)
+    #以下運算 min+(min+1)+(min+2)+(min+3)+...+max 總和的迴圈邏輯
+    result=0
+    for n in range(minNumber,maxNumber+1):
+        result=result+n
+    return '結果:' + str(result)
 
 #建立路徑 / 對應的處理函式
 @app.route('/')
