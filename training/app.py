@@ -1,12 +1,14 @@
 from flask import Flask #載入Flask
 from flask import request #載入 Request物件
+from flask import redirect #載入redirect函式
+import json
 # coding=UTF-8
 
 #建立Application 物件
 app=Flask(
     __name__,
     static_folder='public',#靜態檔案的資料夾名稱
-    static_url_path='/www' #靜態檔案對應的網址路徑
+    static_url_path='/' #靜態檔案對應的網址路徑
     )
 #所有在 public 資料夾底下的檔案，都對應到網址路徑 /www/檔案名稱
 #建立路徑/getSum對應的處理函示
@@ -27,6 +29,11 @@ def getSum(): #min+(min+1)+(min+2)+(min+3)+...+max
 #建立路徑 / 對應的處理函式
 @app.route('/')
 def index():
+    lang=request.headers.get('accept-language')
+    if lang.startswith('en'):
+        return redirect('/en/')
+    else:
+        return redirect('/zh/') 
     # print('請求方法',request.method)
     # print('通訊協定',request.scheme)
     # print('主機名稱',request.host)
@@ -35,18 +42,21 @@ def index():
     # print('瀏覽器和作業系統',request.headers.get('user-agent'))
     # print('語言偏好',request.headers.get('accept-language'))
     # print('引薦網址',request.headers.get('referrer'))
-    lang=request.headers.get('accept-language')
-    print('語言偏好',lang)
-    if lang.startswith('en'):
-        return 'Hello Flask '
-    else:
-        return '您好，歡迎光臨'
-    
-        
-    
-
-
-    
+    #print('語言偏好',lang)
+#建立路徑 /en/ 對應的處理函式
+@app.route('/en/')
+def index_english():
+    return json.dumps({
+        'status':'ok',
+        'text':'Hello World'
+    })   
+#建立路徑 /zh/ 對應的處理函式
+@app.route('/zh/')
+def index_chinese():
+    return json.dumps({
+        'status':'ok',
+        'text':'您好，歡迎光臨'
+    },ensure_ascii=False)  #指示不要用 ASCII 編碼處理中文
 @app.route('/test')#代表我們要處理的網站路徑
 def test():
     return 'This is Test'
