@@ -1,0 +1,47 @@
+#載入pymongo套件
+import pymongo
+from bson.objectid import ObjectId
+#連線到 MongoDB 雲端資料庫
+
+client = pymongo.MongoClient("mongodb+srv://???:???@mycluster.???.mongodb.net/?retryWrites=true&w=majority")
+
+
+# #把資料放進資料庫中
+db = client.mywebsite #選擇要操作mywebsite的資料庫
+collection = db.users#選擇操作members集合
+# data=collection.find_one(ObjectId('6434bda1a6b5d03163efd348'))
+# print(data)
+# #取得文件資料中的欄位
+# print(data['_id'])
+# print(data['email'])
+#取得集合中的第一筆文件資料
+# data=collection.find_one()
+
+#一次新增多筆資料，取得多筆資料的編號
+# result=collection.insert_many([{
+#     'name' : 'Angela',
+#     'email' : 'Angela@Angela.com',
+#     'password' : 'Angela',
+#     'level' : 2
+# },{
+#     'name' : 'Audrey',
+#     'email' : 'Audreya@Audrey.com',
+#     'password' : 'Audrey',
+#     'level' : 3
+# }])
+#print('新增資料成功')
+#print(result.inserted_ids)
+# #把文件資料新增到集合中，取得新增資料的編號
+# result=collection.insert_one({
+#     'name' : '阿明',
+#     'email' : 'rog@rog.com',
+#     'password' : 'rog',
+#     'level' : 2
+# })
+# print('資料新增成功')
+# print(result.inserted_id)
+#一次取得多筆文件資料
+cursor=collection.find()
+print(cursor)
+for doc in cursor:
+    print(doc)
