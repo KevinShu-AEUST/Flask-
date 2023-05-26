@@ -1,1 +1,80 @@
+#初始化資料庫連線
+import pymongo
+client = pymongo.MongoClient("mongodb+srv://???:???@mycluster.???.mongodb.net/?retryWrites=true&w=majority")
+db=client.member_system
+print('資料庫連線建立成功')
+#初始化 Flask伺服器
+from flask import *
+app=Flask(
+    __name__,
+    static_folder='public',
+    static_url_path='/'
+)
+app.secret_key='any string but secret'
+#處理路由
+@app.route('/')
+def index():
+    return render_template('index.html')
+@app.route('/member')
+def member():
+    if "nickname" in session:
+        return render_template("member.html")
+    else:
+        return redirect("/")
+# /error?msg=錯誤訊息
+@app.route('/error')
+def error():
+    message=request.args.get('msg','發生錯誤，請聯繫客服')
+    return render_template('error.html',message=message)
+@app.route("/signup",methods=["POST"])
+def signup():
+    nickname=request.form["nickname"]
+    email=request.form["email"]
+    password=request.form["password"]
+    # 根據接收到的資料，和資料庫互動
+    colletion=db.user
+    #檢查是否有相同Email的文件資料
+    result=colletion.find_one({
+        "$and":[
+            {"email":email},
+            {"password":password}
+        ]
+        })
+    #找不到對應的資料，登入失敗，導向到錯誤葉面
+    if result!=None:
+        return redirect("/error?msg=信箱已經被註冊")
+    #把資料放進資料庫，完成註冊
+    colletion.insert_one({
+        "nickname":nickname,
+        "email":email,
+        "password":password
+    })
+    return redirect("/") 
+@app.route("/signin",methods=["POST"])
+def signin():
+    #從前端取得使用者的輸入
+    email=request.form["email"]
+    password=request.form["password"]
+    #和資料庫作互動
+    collection=db.user
+    #檢查信箱密碼是否正確
+    result=collection.find_one({
+        "$and":[
+            {"email":email},
+            {"password":password}
+        ]
+    })    
+    #找不到對應的資料、登入失敗，導向到錯誤頁面
+    if result==None:
+        return redirect('/error?msg=帳號或密碼輸入錯誤')
+    #登入成功，在 Session 紀錄會員資訊，導向到會員頁面
+    session["nickname"]=result["nickname"]
+    return redirect("/member")
+@app.route("/signout")
+def signout():
+    #移除Session中的會員資訊
+    del session["nickname"]
+    return redirect("/")
 
+#啟動伺服器
+app.run(port=3000)
